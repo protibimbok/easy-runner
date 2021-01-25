@@ -1,0 +1,107 @@
+{
+	"name": "easy-runner",
+	"displayName": "Easy Runner",
+	"publisher": "Saad",
+	"description": "Runs code in terminal",
+	"version": "0.0.4",
+	"icon": "media/icon.png",
+	"repository": {
+		"url": "https://github.com/alor-pretatma/easy-runner",
+		"type": "GitHub"
+	},
+	"engines": {
+		"vscode": "^1.52.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"keywords":["runner", "code runner", "execute code", "run code", "terminal"],
+	"activationEvents": [
+		"onCommand:easyRunner.runCode"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "easyRunner.runCode",
+				"title": "Run In terminal",
+				"icon": {
+					"dark": "./media/play-light.png",
+					"light": "./media/play-dark.png"
+				}
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "easyRunner.runCode",
+					"group": "navigation"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "easyRunner.runCode",
+					"group": "navigation"
+				}
+			]
+		},
+		"keybindings": [
+			{
+				"command": "easyRunner.runCode",
+				"key": "ctrl+k",
+				"mac": "cmd+k",
+				"when": "editorTextFocus"
+			}
+		],
+		"configuration": {
+			"title": "Easy Runner",
+			"properties": {
+				"easyRunner.fileTypes": {
+					"type": "object",
+					"scope": "resource",
+					"default": {
+						".c": "gcc ./${fileDirWorkSpace}/${fileBaseName} -o ./${fileDirWorkSpace}/${fileNameNoExt} && ./${fileDirWorkSpace}/${fileNameNoExt}",
+						".cpp": "g++ ./${fileDirWorkSpace}/${fileBaseName} -o ./${fileDirWorkSpace}/${fileNameNoExt} && ./${fileDirWorkSpace}/${fileNameNoExt}",
+						".js": "node ./${fileDirWorkSpace}/${fileBaseName}",
+						".ts": "ts-node ./${fileDirWorkSpace}/${fileBaseName}"
+					},
+					"description": "The commands you want to run for files.\nAvailable variables:\n${filePath}: Complete file path\n${fileDir}: File dir from root \n${fileNameNoExt}: File name without extension\n${workSpacePath}: Workspace drectory from root\n${fileDirWorkSpace}: File directory path from workspace\n"
+				},
+				"easyRunner.clear": {
+					"type": "boolean",
+					"scope": "resource",
+					"default": true,
+					"description": "Wheather or not to clear the console before running command"
+				},
+				"easyRunner.executeCommanInOneLine": {
+					"type": "boolean",
+					"scope": "resource",
+					"default": true,
+					"description": "Compile and run in one command"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.52.0",
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "^12.11.7",
+		"eslint": "^7.15.0",
+		"@typescript-eslint/eslint-plugin": "^4.9.0",
+		"@typescript-eslint/parser": "^4.9.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.1.3",
+		"typescript": "^4.1.2",
+		"vscode-test": "^1.4.1"
+	},
+	"markdown": "standard"
+}
