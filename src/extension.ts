@@ -1,14 +1,30 @@
 import * as vscode from 'vscode';
-import {dirname, basename} from 'path';
+import {parse} from 'path';
+import {spawnSync} from 'child_process';
+import {VTexec} from 'open-term';
+
 var lastPath : string | null = null;
 
 export function activate(context: vscode.ExtensionContext) {
 
 	
-	let disposable = vscode.commands.registerCommand('easyRunner.runCode', doJob);
+	let disposable = vscode.commands.registerCommand('easyRunner.runCode', ()=>{
+		runCode(false);
+	}),
+	disposable2 = vscode.commands.registerCommand('easyRunner.runCodeInWindow', ()=>{
+		runCode(true);
+	}),
+	disposable3 = vscode.commands.registerCommand('easyRunner.runButton', ()=>{
+		runCode(vscode.workspace.getConfiguration('easyRunner').runInSeparateWindow);
+	});
 
 	context.subscriptions.push(disposable);
+	context.subscriptions.push(disposable2);
+	context.subscriptions.push(disposable3);
+
 }
+
+ 
 
 function escapeSlashes(str : string) : string{
 	return str.replace(/\\|\//g, function(a){
@@ -40,7 +56,38 @@ function getTerminal(workSpace : boolean): vscode.Terminal{
 	return vscode.window.createTerminal('Easy Runner');
 }
 
-function doJob(){
+
+
+function serCmd(cmd:string):{cmd:string, args:Array<string> | undefined} {
+	let p:Array<string> = [];
+	let x=cmd.split(" ");
+	for(let i=1;i<x.length;i++){
+		if(/[^\s]/.test(x[i])){
+			p.push(x[i]);
+		}
+	}
+	return {
+		cmd: x[0],
+		args: p
+	};
+}
+
+async function ops(cmds:Array<string>, wp:string) {
+	let i = 0, childProcess ;
+
+	while(i<cmds.length-1 && cmds[i]){
+		let cmd = serCmd(cmds[i]);
+		spawnSync(cmd.cmd, cmd.args, {
+			cwd: wp
+		});
+		i++;
+	}
+	VTexec(cmds[cmds.length-1].replace("./", wp+"/").replace(".\\", wp+"\\"));
+}
+
+
+
+function runCode(inWindow:boolean){
 	let cfg = vscode.workspace.getConfiguration('easyRunner.fileTypes'), cmdStr="", workSpace = true;
 
 	if(!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document){
@@ -48,10 +95,11 @@ function doJob(){
 		return;
 	}
 	let filePath = vscode.window.activeTextEditor.document.fileName,
+	    filePathObj = parse(filePath),
 		workSpacePath, ter : vscode.Terminal,
-		fileBaseName = basename(filePath),
-		ext = fileBaseName.substr(fileBaseName.lastIndexOf("."), fileBaseName.length - 1),
-		fileDir = dirname(filePath);
+		fileBaseName = filePathObj.base,
+		ext = filePathObj.ext,
+		fileDir = filePathObj.dir;
 
 	if(!filePath || !ext || typeof cfg[ext] !== 'string'){
 		vscode.window.showInformationMessage("Go to setting to add support for "+ext+" files!");
@@ -71,7 +119,7 @@ function doJob(){
 	ter = getTerminal(workSpace);
 	
 	ter.show();
-	let fileNameNoExt = fileBaseName.substr(0, fileBaseName.lastIndexOf(".")),
+	let fileNameNoExt = filePathObj.name,
 		fileDirWorkSpace = fileDir.replace(new RegExp("^"+escapeSlashes(workSpacePath)), "");
 	
 	
@@ -79,15 +127,20 @@ function doJob(){
 		eval("cmdStr = `"+escapeSlashes(cfg[ext])+"`");
 		cmdStr = filter(cmdStr);
 
+		if(inWindow){
+			ops(cmdStr.split(' && '), workSpacePath);
+			return;
+		}
+
 		if(!workSpace && lastPath !== workSpacePath){
 			lastPath = workSpacePath;
 			ter.sendText("cd "+workSpacePath, true);
 		}
-		if(vscode.workspace.getConfiguration('easyRunner').clear===true){
+		if(vscode.workspace.getConfiguration('easyRunner').clearOnRun===true){
 			ter.sendText("clear", true);
 		}
-		if(vscode.workspace.getConfiguration('easyRunner').executeCommanInOneLine!==true){
-			cmdStr.split("&&").forEach(function(cmd){
+		if(vscode.workspace.getConfiguration('easyRunner').executeCommandInOneLine!==true){
+			cmdStr.split(" && ").forEach(function(cmd){
 				ter.sendText(cmd, true);
 			});
 		}else{
@@ -98,4 +151,7 @@ function doJob(){
 		vscode.window.showInformationMessage("Some error occured!");
 	}
 }
+
+
+
 export function deactivate() {}

@@ -1,30 +1,66 @@
 {
 	"name": "easy-runner",
 	"displayName": "Easy Runner",
-	"publisher": "Saad",
-	"description": "Runs code in terminal",
-	"version": "0.0.4",
+	"publisher": "alor-pretatma",
+	"author": "Saad <sakib.saad.khan@gmail.com>",
+	"description": "Runs code easily in terminal",
+	"version": "1.0.1",
 	"icon": "media/icon.png",
 	"repository": {
-		"url": "https://github.com/alor-pretatma/easy-runner",
-		"type": "GitHub"
+		"url": "https://github.com/alor-pretatma/easy-runner.git",
+		"type": "git"
 	},
 	"engines": {
 		"vscode": "^1.52.0"
 	},
 	"categories": [
-		"Other"
+		"Programming Languages"
 	],
-	"keywords":["runner", "code runner", "execute code", "run code", "terminal"],
+	"keywords": [
+		"run",
+		"code",
+		"terminal",
+		"c",
+		"c++",
+		"js",
+		"cpp",
+		"java",
+		"javascript",
+		"dart",
+		"c#",
+		"python",
+		"typescript",
+		"ts",
+		"easy runner",
+		"runner"
+	],
 	"activationEvents": [
-		"onCommand:easyRunner.runCode"
+		"onCommand:easyRunner.runCode",
+		"onCommand:easyRunner.runCodeInWindow",
+		"onCommand:easyRunner.runButton"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "easyRunner.runCode",
-				"title": "Run In terminal",
+				"title": "Run In Terminal",
+				"icon": {
+					"dark": "./media/play-light.png",
+					"light": "./media/play-dark.png"
+				}
+			},
+			{
+				"command": "easyRunner.runCodeInWindow",
+				"title": "Run In Window",
+				"icon": {
+					"dark": "./media/play-light.png",
+					"light": "./media/play-dark.png"
+				}
+			},
+			{
+				"command": "easyRunner.runButton",
+				"title": "Run This",
 				"icon": {
 					"dark": "./media/play-light.png",
 					"light": "./media/play-dark.png"
@@ -34,7 +70,7 @@
 		"menus": {
 			"editor/title": [
 				{
-					"command": "easyRunner.runCode",
+					"command": "easyRunner.runButton",
 					"group": "navigation"
 				}
 			],
@@ -42,14 +78,36 @@
 				{
 					"command": "easyRunner.runCode",
 					"group": "navigation"
+				},
+				{
+					"command": "easyRunner.runCodeInWindow",
+					"group": "navigation"
 				}
 			]
 		},
 		"keybindings": [
 			{
 				"command": "easyRunner.runCode",
-				"key": "ctrl+k",
-				"mac": "cmd+k",
+				"key": "ctrl+enter",
+				"mac": "cmd+enter",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "easyRunner.runCodeInWindow",
+				"key": "ctrl+alt+enter",
+				"mac": "cmd+alt+enter",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "easyRunner.runCode",
+				"key": "ctrl+r",
+				"mac": "cmd+r",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "easyRunner.runCodeInWindow",
+				"key": "ctrl+alt+r",
+				"mac": "cmd+alt+r",
 				"when": "editorTextFocus"
 			}
 		],
@@ -63,21 +121,28 @@
 						".c": "gcc ./${fileDirWorkSpace}/${fileBaseName} -o ./${fileDirWorkSpace}/${fileNameNoExt} && ./${fileDirWorkSpace}/${fileNameNoExt}",
 						".cpp": "g++ ./${fileDirWorkSpace}/${fileBaseName} -o ./${fileDirWorkSpace}/${fileNameNoExt} && ./${fileDirWorkSpace}/${fileNameNoExt}",
 						".js": "node ./${fileDirWorkSpace}/${fileBaseName}",
-						".ts": "ts-node ./${fileDirWorkSpace}/${fileBaseName}"
+						".ts": "ts-node ./${fileDirWorkSpace}/${fileBaseName}",
+						".py": "python ./${fileDirWorkSpace}/${fileBaseName}"
 					},
 					"description": "The commands you want to run for files.\nAvailable variables:\n${filePath}: Complete file path\n${fileDir}: File dir from root \n${fileNameNoExt}: File name without extension\n${workSpacePath}: Workspace drectory from root\n${fileDirWorkSpace}: File directory path from workspace\n"
 				},
-				"easyRunner.clear": {
+				"easyRunner.clearOnRun": {
 					"type": "boolean",
 					"scope": "resource",
 					"default": true,
 					"description": "Wheather or not to clear the console before running command"
 				},
-				"easyRunner.executeCommanInOneLine": {
+				"easyRunner.executeCommandInOneLine": {
 					"type": "boolean",
 					"scope": "resource",
 					"default": true,
 					"description": "Compile and run in one command"
+				},
+				"easyRunner.runInSeparateWindow":{
+					"type": "boolean",
+					"scope": "resource",
+					"default": false,
+					"description": "Wheather or not to run compiled file in separate window"
 				}
 			}
 		}
@@ -91,17 +156,19 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.52.0",
 		"@types/glob": "^7.1.3",
 		"@types/mocha": "^8.0.4",
 		"@types/node": "^12.11.7",
-		"eslint": "^7.15.0",
+		"@types/vscode": "^1.52.0",
 		"@typescript-eslint/eslint-plugin": "^4.9.0",
 		"@typescript-eslint/parser": "^4.9.0",
+		"eslint": "^7.15.0",
 		"glob": "^7.1.6",
-		"mocha": "^8.1.3",
 		"typescript": "^4.1.2",
 		"vscode-test": "^1.4.1"
 	},
-	"markdown": "standard"
+	"markdown": "github",
+	"dependencies": {
+		"open-term": "^2.0.4"
+	}
 }
