@@ -87,16 +87,21 @@ async function ops(cmds:Array<string>, wp:string) {
 
 
 
-function runCode(inWindow:boolean){
+async function runCode(inWindow:boolean){
 	let cfg = vscode.workspace.getConfiguration('easyRunner.fileTypes'), cmdStr="", workSpace = true;
 
 	if(!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document){
 		vscode.window.showInformationMessage("Please click in the editor you want to run");
 		return;
 	}
+
+	if(vscode.window.activeTextEditor.document.isDirty){
+		await vscode.window.activeTextEditor.document.save();
+	}
+
 	let filePath = vscode.window.activeTextEditor.document.fileName,
 	    filePathObj = parse(filePath),
-		workSpacePath, ter : vscode.Terminal,
+		workSpacePath : string, ter : vscode.Terminal,
 		fileBaseName = filePathObj.base,
 		ext = filePathObj.ext,
 		fileDir = filePathObj.dir;
@@ -128,7 +133,15 @@ function runCode(inWindow:boolean){
 		cmdStr = filter(cmdStr);
 
 		if(inWindow){
-			ops(cmdStr.split(' && '), workSpacePath);
+			vscode.window.withProgress({
+				location: vscode.ProgressLocation.Window,
+				cancellable: false,
+				title: "Compiling file..."
+			}, async (prb)=>{
+				prb.report({increment: 0});
+				await ops(cmdStr.split(" && "), workSpacePath);
+				prb.report({increment: 100});
+			});
 			return;
 		}
 

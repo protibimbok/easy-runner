@@ -1,6 +1,12 @@
 # Change Log
 
-### ![Version: 1.0.1](https://img.shields.io/badge/version-1.0.1-green)
+
+### ![Version: 1.0.2](https://img.shields.io/badge/version-1.0.2-green)  
+1. Default setting of running single command changed to false
+2. Added a progress bar when running in separate window is true
+3. File will be now saved automatically on run
+
+### ![Version: 1.0.1](https://img.shields.io/badge/version-1.0.1-orange)
   
 1. Added support for opening in separate window
 2. Added key bindings for running code

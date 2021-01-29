@@ -4,7 +4,7 @@
 	"publisher": "alor-pretatma",
 	"author": "Saad <sakib.saad.khan@gmail.com>",
 	"description": "Runs code easily in terminal",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"icon": "media/icon.png",
 	"repository": {
 		"url": "https://github.com/alor-pretatma/easy-runner.git",
@@ -135,7 +135,7 @@
 				"easyRunner.executeCommandInOneLine": {
 					"type": "boolean",
 					"scope": "resource",
-					"default": true,
+					"default": false,
 					"description": "Compile and run in one command"
 				},
 				"easyRunner.runInSeparateWindow":{

@@ -1,4 +1,4 @@
-# Easy Runner  ![Version: 1.0.1](https://img.shields.io/badge/version-1.0.1-green)
+# Easy Runner  ![Version: 1.0.1](https://img.shields.io/badge/version-1.0.2-green)
   
     
   
@@ -17,9 +17,9 @@ Otherwise you'll have to define the full path in the command.
   
 ![](media/howTo.png)
 
-> ***Note: Hit save before running code and if the run icon does not appear, click inside the text editor and it should***
+> ***Note: If the run icon does not appear, click inside the text editor and it should***
 
-![Note: Don't forget to save file before running](https://img.shields.io/badge/Note-Don't%20forget%20to%20save%20file%20before%20running-red)  
+![Note: File will be saved before running](https://img.shields.io/badge/Note-File%20will%20be%20saved%20before%20running-red)  
   
   
 ## Features
@@ -81,7 +81,8 @@ In this case, this above command will be translated to:
 ```
 gcc .\core\take_input.c -o .\core\take_input && .\core\take_input.c
 ```
->***You don't need to specify the files complete path. We will take care of this inshallah.***
+>***Terminals cwd will always be the workspace's path. And if the file is outside of workspace then the files directory.  
+So, you don't need to specify the files complete path. We will take care of this inshallah.***
 
 #### An example of what the value can be
   
@@ -132,6 +133,8 @@ After completion of running the above the following will be executed:
 ./${fileDirWorkSpace}/${fileNameNoExt}
 ```
 
+
+
 > ***This options is helpful for windows users because in some cases `&&` results to an error.***
 </div>
 
@@ -163,7 +166,12 @@ If you find any then please consider texting me in [***Instagram***](https://ins
 
 ## Release Notes
 
-### ![Version: 1.0.1](https://img.shields.io/badge/version-1.0.1-green)
+### ![Version: 1.0.2](https://img.shields.io/badge/version-1.0.2-green)  
+1. Default setting of running single command changed to false
+2. Added a progress bar when running in separate window is true
+3. File will be now saved automatically on run
+
+### ![Version: 1.0.1](https://img.shields.io/badge/version-1.0.1-orange)  
   
 1. Added support for opening in separate window
 2. Added key bindings for running code
